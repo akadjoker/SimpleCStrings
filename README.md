@@ -1,8 +1,8 @@
 # SimpleCStrings
 implementation of strings in c with memory management
 
-String *newString(const char* str);
-String *copyString(String *s)
+String *newString(const char* str); <br>
+String *copyString(String *s) <br>
 String *Trim(String *s)
 String *TrimLeft(String *s)
 String *TrimRight(String *s)
