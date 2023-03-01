@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
-
+#include<stdbool.h>
 
 
 typedef struct String
@@ -39,6 +39,14 @@ char *ft_strdup(const char *str)
 }
 String *root =NULL;
 
+bool validString(String *s)
+{
+    if(!s)
+        return false;
+    if(!s->str)
+        return false;
+    return true;
+}
 
 String *newString(const char* str)
 {
@@ -58,10 +66,9 @@ String *newString(const char* str)
 
 String *copyString(String *s)
 {
-    if (!s)
-        newString("");
-    if (!s->str)
-        newString("");
+    if (!validString(s))
+        return newString("");
+
 
     return newString(s->str);
 }
@@ -71,10 +78,10 @@ String *Trim(String *s)
     char buffer[256]={0};
     int i=0;
     int j=0;
-    if (!s)
-        return newString("null");
-    if (!s->str)
-        return newString("null");
+    if (!validString(s))
+        return newString("");
+
+
     while (s->str[i])
     {
          if (!ft_isSpace(s->str[i])) 
@@ -93,10 +100,10 @@ String *TrimLeft(String *s)
     char buffer[256]={0};
     int i=0;
     int j=0;
-    if (!s)
-        return newString("null");
-    if (!s->str)
-        return newString("null");
+    if (!validString(s))
+        return newString("");
+
+
 
     while(s->str[i] && ft_isSpace(s->str[i]))
         i++;
@@ -113,10 +120,10 @@ String *TrimLeft(String *s)
 String *TrimRight(String *s)
 {
     char buffer[256]={0};
-    if (!s)
-        return newString("null");
-    if (!s->str)
-        return newString("null");
+    if (!validString(s))
+        return newString("");
+
+
 
     
     int last = s->size-1;
@@ -143,10 +150,10 @@ String *TrimRight(String *s)
 String *UpperString(String *s)
 {
     char buffer[256]={0};
-    if (!s)
-        return newString("null");
-    if (!s->str)
-        return newString("null");
+    if (!validString(s))
+        return newString("");
+
+
     int i=0;
     while(s->str[i] !='\0')
     {
@@ -164,10 +171,9 @@ String *UpperString(String *s)
 String *LowerString(String *s)
 {
     char buffer[256]={0};
-    if (!s)
-        return newString("null");
-    if (!s->str)
-        return newString("null");
+    if (!validString(s))
+        return newString("");
+
     int i=0;
     while(s->str[i] !='\0')
     {
@@ -181,6 +187,7 @@ String *LowerString(String *s)
     buffer[i] = '\0';
     return newString(buffer);
 }
+
 
 unsigned int is_delim(char c, char *delim)
 {
@@ -254,6 +261,108 @@ char *StrTok(const char *src, char *delim)
     return NULL;
 }
 
+
+bool StringEndsWith(String *s,const char *find)
+{
+    if (!validString(s))
+        return false;
+    int find_len = ft_size(find);
+    int size = s->size;
+    if (find_len>=size)
+        return false;
+    int i=  (size - find_len) ;
+    int j=0;
+    const char *str = s->str;
+    while(i < size && str[i] && find[j])
+    {
+        if(str[i] != find[j])
+            return false;
+        j++;    
+        i++;
+    }
+    return true;
+}
+
+int StringCompare(String *s, String *find)
+{
+    if (!validString(s) || !validString(find))
+        return -1;
+    size_t	i;
+	i = 0;
+	while (s->str[i] != '\0' && s->str[i] == find->str[i] && i < find->size - 1)
+		i++;
+	return ((unsigned char)s->str[i] - (unsigned char)find->str[i]);
+}
+
+bool StringFind(String *s, String *find)
+{
+    if (!validString(s) || !validString(find))
+        return false;
+    int i=0;
+    int k=0;
+    int len = find->size;
+    while(s->str[i])
+    {
+        if(is_delim(s->str[i], find->str))
+        {
+            i++;
+            k++;
+            continue;
+        } else
+        {
+            if ( k == len)
+                return true;
+            k=0;
+        }
+        i++;
+    }
+    return (k==len);
+}
+
+String *SubString(String *s, int start, int end)
+{
+    if (!validString(s))
+        return NULL;
+    int len = (start + end);
+    if (len >= s->size) 
+        return newString("");
+    
+    char buffer[255]={0};
+    int i=start;
+    int j=0;
+    while(i<len && s->str[i])
+    {
+        buffer[j]=s->str[i];
+        i++;
+        j++;
+
+    }
+    buffer[j]='\0';
+
+    return newString(buffer);
+}
+
+
+bool StringStartsWith(String *s,const char *find)
+{
+    if (!validString(s))
+        return false;
+    int find_len = ft_size(find);
+    int size = s->size;
+    if (find_len>=size)
+        return false;
+    int i=0;
+    int j=0;
+    const char *str = s->str;
+    while(i < find_len && str[i] && find[j])
+    {
+        if(str[i] != find[j])
+            return false;
+        j++;    
+        i++;
+    }
+    return true;
+}
 
 
 String ** SplitString(String *s, const char* delim)
@@ -381,6 +490,28 @@ String *j =JoinString(list," ");
 free(list);
 
 printf("Join    [%s] \n",j->str);
+
+if (StringEndsWith(newString("google.com"),".com"))
+    printf(" ends with (.com)\n");
+else
+    printf("don't wnds with (.com)\n");
+
+if (StringStartsWith(newString("www.google.com"),"www."))
+    printf(" start with (www)\n");
+else
+    printf("don't start with (www)\n");
+
+
+if (StringFind(newString("luis miguel rosa dos santos"),newString("rosas")))
+    printf("find (txt)\n");
+else
+    printf("din't find(txt)\n");
+
+
+String *sub=SubString(newString("luis miguel rosa dos santos"),5,6);
+
+printf("Sub string (%s) \n",sub->str);
+
 
 
 free_strings();
